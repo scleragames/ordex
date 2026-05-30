@@ -1,0 +1,243 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0b0e14" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f0f2f5" media="(prefers-color-scheme: light)" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Ordex" />
+  <meta name="description" content="Ordex - Live Order Booking System for local vendors. Track and manage orders in real time." />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="color-scheme" content="dark light" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <title>Ordex — Live Order Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <i class="fas fa-bolt"></i>
+      <span>Ordex</span>
+    </div>
+    <div class="nav-center" id="nav-center">
+      <div class="nav-tabs">
+        <button class="tab-btn active" data-tab="dashboard">
+          <i class="fas fa-clipboard-list"></i><span> Dashboard</span>
+        </button>
+        <button class="tab-btn" data-tab="tracking">
+          <i class="fas fa-map-marker-alt"></i><span> Tracking</span>
+        </button>
+      </div>
+      <div class="nav-actions">
+        <button class="nav-icon-btn" id="btn-theme" title="Toggle theme">
+          <i class="fas fa-moon"></i>
+        </button>
+        <button class="nav-icon-btn" id="btn-sound" title="Toggle sound">
+          <i class="fas fa-volume-up"></i>
+        </button>
+        <button class="nav-icon-btn" id="btn-activity" title="Activity log">
+          <i class="fas fa-history"></i>
+        </button>
+        <div class="nav-stats-group">
+          <span class="stat-badge" id="stat-total" title="Total orders">0</span>
+          <span class="stat-badge stat-pending" id="stat-pending" title="Pending">0</span>
+          <span class="stat-badge stat-live" id="stat-live" title="Active">0</span>
+        </div>
+      </div>
+    </div>
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu">
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+</nav>
+
+<div class="stats-bar" id="stats-bar">
+  <div class="stat-item">
+    <i class="fas fa-dollar-sign stat-icon"></i>
+    <span class="stat-value" id="stat-revenue">$0.00</span>
+    <span class="stat-label">Revenue</span>
+  </div>
+  <div class="stat-item">
+    <i class="fas fa-shopping-bag stat-icon"></i>
+    <span class="stat-value" id="stat-order-count">0</span>
+    <span class="stat-label">Orders</span>
+  </div>
+  <div class="stat-item">
+    <i class="fas fa-chart-line stat-icon"></i>
+    <span class="stat-value" id="stat-avg-order">$0.00</span>
+    <span class="stat-label">Avg Order</span>
+  </div>
+  <div class="stat-item">
+    <i class="fas fa-bolt stat-icon"></i>
+    <span class="stat-value" id="stat-active">0</span>
+    <span class="stat-label">Active</span>
+  </div>
+  <div class="stat-item">
+    <i class="fas fa-clock stat-icon"></i>
+    <span class="stat-value" id="stat-pending-count">0</span>
+    <span class="stat-label">Pending</span>
+  </div>
+</div>
+
+<main class="main-content">
+
+  <section class="tab-panel active" id="panel-dashboard">
+    <div class="panel-header">
+      <div class="panel-header-left">
+        <h1><i class="fas fa-clipboard-list"></i> Dashboard</h1>
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" id="search-input" placeholder="Search orders..." />
+        </div>
+      </div>
+      <div class="panel-header-right">
+        <button class="btn btn-sm btn-ghost" id="btn-clear" title="Clear delivered">
+          <i class="fas fa-broom"></i> Clear
+        </button>
+        <button class="btn btn-sm btn-ghost" id="btn-export" title="Export CSV">
+          <i class="fas fa-download"></i> Export
+        </button>
+        <button class="btn btn-primary" id="btn-add-order">
+          <i class="fas fa-plus"></i> New Order
+        </button>
+      </div>
+    </div>
+
+    <div class="filter-chips" id="filter-chips">
+      <button class="chip active" data-filter="all">All</button>
+      <button class="chip" data-filter="pending">Pending</button>
+      <button class="chip" data-filter="confirmed">Confirmed</button>
+      <button class="chip" data-filter="preparing">Preparing</button>
+      <button class="chip" data-filter="ready">Ready</button>
+      <button class="chip" data-filter="delivered">Delivered</button>
+      <span class="chip-sep"></span>
+      <button class="chip priority-chip" data-priority="all">Any</button>
+      <button class="chip priority-chip" data-priority="normal"><i class="fas fa-flag" style="color:var(--confirmed)"></i> Normal</button>
+      <button class="chip priority-chip" data-priority="high"><i class="fas fa-flag" style="color:var(--preparing)"></i> High</button>
+      <button class="chip priority-chip" data-priority="urgent"><i class="fas fa-flag" style="color:var(--danger)"></i> Urgent</button>
+    </div>
+
+    <div class="board" id="board">
+      <div class="board-col" data-status="pending">
+        <div class="col-header"><i class="fas fa-clock"></i> Pending <span class="col-count" id="count-pending">0</span></div>
+        <div class="col-body" id="col-pending"></div>
+      </div>
+      <div class="board-col" data-status="confirmed">
+        <div class="col-header"><i class="fas fa-check-circle"></i> Confirmed <span class="col-count" id="count-confirmed">0</span></div>
+        <div class="col-body" id="col-confirmed"></div>
+      </div>
+      <div class="board-col" data-status="preparing">
+        <div class="col-header"><i class="fas fa-fire"></i> Preparing <span class="col-count" id="count-preparing">0</span></div>
+        <div class="col-body" id="col-preparing"></div>
+      </div>
+      <div class="board-col" data-status="ready">
+        <div class="col-header"><i class="fas fa-check-double"></i> Ready <span class="col-count" id="count-ready">0</span></div>
+        <div class="col-body" id="col-ready"></div>
+      </div>
+      <div class="board-col" data-status="delivered">
+        <div class="col-header"><i class="fas fa-flag-checkered"></i> Delivered <span class="col-count" id="count-delivered">0</span></div>
+        <div class="col-body" id="col-delivered"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tab-panel" id="panel-tracking">
+    <div class="panel-header">
+      <h1><i class="fas fa-map-marker-alt"></i> Live Tracking</h1>
+      <div class="live-indicator">
+        <span class="live-dot"></span> <span id="live-count">0</span> active
+      </div>
+    </div>
+    <div class="tracking-grid" id="tracking-grid"></div>
+    <div class="tracking-empty" id="tracking-empty">
+      <i class="fas fa-inbox"></i>
+      <h2>No active orders</h2>
+      <p>New orders appear here in real time.</p>
+    </div>
+  </section>
+
+</main>
+
+<div class="activity-overlay" id="activity-overlay"></div>
+<div class="activity-panel" id="activity-panel">
+  <div class="activity-header">
+    <h2><i class="fas fa-history"></i> Activity Log <span class="activity-count" id="activity-count">0</span></h2>
+    <button class="modal-close" id="activity-close"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="activity-body" id="activity-body">
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <h2 id="modal-title">New Order</h2>
+      <button class="modal-close" id="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <form id="order-form" autocomplete="off">
+      <input type="hidden" id="form-id" />
+      <div class="form-group">
+        <label><i class="fas fa-user"></i> Customer Name</label>
+        <input type="text" id="form-name" required placeholder="e.g. Sarah Johnson" />
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="form-group">
+          <label><i class="fas fa-flag"></i> Priority</label>
+          <select id="form-priority">
+            <option value="normal">Normal</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-tag"></i> Order #</label>
+          <input type="text" id="form-order-num" placeholder="Auto" disabled />
+        </div>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-shopping-bag"></i> Items</label>
+        <div id="items-container">
+          <div class="item-row">
+            <input type="text" class="item-name" placeholder="Item name" required />
+            <input type="number" class="item-qty" placeholder="Qty" value="1" min="1" required />
+            <input type="number" class="item-price" placeholder="Price" step="0.01" min="0" required />
+            <button type="button" class="btn-icon item-remove" disabled><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-sm" id="btn-add-item"><i class="fas fa-plus"></i> Add Item</button>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-sticky-note"></i> Notes</label>
+        <textarea id="form-notes" rows="2" placeholder="Special instructions..."></textarea>
+      </div>
+      <div class="form-group total-display">
+        <span>Total</span>
+        <span id="form-total">$0.00</span>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-ghost" id="form-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="form-submit">
+          <i class="fas fa-plus"></i> Create Order
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer class="app-footer">
+  <span>Ordex <span class="dev-credit">by Aakash</span></span>
+</footer>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
